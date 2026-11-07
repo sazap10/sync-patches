@@ -104,6 +104,21 @@ crash logger wraps whatever handler is installed by then. A crash is written to 
 to Crashlytics' handler if it installed one, which forwards it to Android without recording it, or straight to
 Android's own handler.
 
+## What "Default posts sort: Best" does
+
+Sync has one global default posts sort, the `post_sort_preference` setting. Its fallback is `sort_0` (Hot), and it
+applies to every feed that has no sort saved for it, subreddits included. Reddit only supports Best on the front
+page, so the patch leaves that setting and its fallback unchanged and adds a front-page-only default:
+
+- When Sync loads its settings, the patch records whether `post_sort_preference` has been saved.
+- When a feed has no saved sort, Sync's fallback lookup (New for friends and user feeds, Relevance for searches,
+  otherwise the global default) now first returns Best (`sort_999`, shown as "Best") for the `frontpage` feed, as long
+  as `post_sort_preference` has never been saved.
+
+Sorts saved for a single feed (`per_sub_sorts`) are looked up before this and still win. If you choose a default
+posts sort in settings, it applies everywhere again, front page included. Subreddits keep Hot, and comment sorts are
+not touched. Sync's background sync service reads the global default directly and is not changed.
+
 ## Known issues
 
 - **Edge-to-edge.** From target 35 Android draws apps edge to edge, and at target 36 the opt-out attribute is ignored.
