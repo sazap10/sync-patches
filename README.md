@@ -86,9 +86,11 @@ the Files app and go to Downloads, then SyncCrashes. On Android 9 and earlier th
 
 - **Edge-to-edge.** From target 35 Android draws apps edge to edge, and at target 36 the opt-out attribute is ignored.
   Sync's layouts were not built for that, so some screens may draw under the status bar, navigation bar or display
-  cutout. This bundle does not change layouts. It only fixes the bottom sheet crash described above.
-- **Barely tested on a device.** A Pixel 8 on Android SDK 37 confirmed the receiver fix and found the bottom sheet
-  crash. The rest has not been exercised on a device.
+  cutout. The bundle only changes the toolbar-anchored sheets described above. Ordinary bottom sheets now draw behind
+  the status and navigation bars while Material pads their content clear of both. In landscape, sheets that Sync
+  opens fully expanded (such as comment options) fill the whole screen height, as they already did at target 33
+  apart from the bar areas. This is accepted and not patched.
+- **Limited device testing.** Only one device has been tested. See "Device test results" below.
 - **Sync for Reddit Pro** was not available while writing these patches. The receiver rewrite matches API calls and
   package names rather than obfuscated class names, so it should apply, but it is untested.
 - Morphe Desktop's developer option "verify with SDK" fails on this app with ten cross-DEX errors for OkHttp's
@@ -115,6 +117,19 @@ crash from them, but they need checking on a device.
   taps are user actions and are not affected.
 - Exact alarms: WorkManager calls `AlarmManager.setExact`. Sync already targets 33, so this is not new at 36.
 - Android 16 "safer intents" and intent redirection protections.
+
+## Device test results
+
+Pixel 8 on Android SDK 37, built from `2c31c3a` with patcheddit 2.0.3 (default options):
+
+- No crashes. Without the receiver fix, the same app crashed at startup with
+  `SecurityException: One of RECEIVER_EXPORTED or RECEIVER_NOT_EXPORTED should be specified` from Play Core.
+- The anchored sort and "more actions" sheets on the posts and comments screens open without crashing and sit
+  directly below the toolbar.
+- Ordinary bottom sheets draw edge to edge behind the status and navigation bars, with their content inset clear of
+  both. A target 33 build on the same phone shows the same sheets at full height, without the bar areas.
+
+Not yet checked on a device: notifications, downloads, translation, theme changes, login, and Android 14 or 15.
 
 ## Building locally
 
