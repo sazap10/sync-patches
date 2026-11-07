@@ -92,6 +92,18 @@ account menu as usual.
 Onboarding is also where Sync asks for the notification permission on Android 13 and later. With it skipped, allow
 notifications for Sync in Android's app settings if you want them.
 
+## What "Disable Crashlytics" does
+
+Sets the `firebase_crashlytics_collection_enabled` meta-data on `<application>` to `false`, replacing any existing
+value. Crashlytics then neither collects nor sends crash reports. Sync itself only ever calls
+`setCrashlyticsCollectionEnabled(false)` (when you opt out in its settings), so nothing turns collection back on at
+runtime. Firebase Analytics and the other Firebase components are not changed.
+
+"Log crashes" still works. Firebase starts from its content provider before `RedditApplication.onCreate`, so the
+crash logger wraps whatever handler is installed by then. A crash is written to the file first and then passed on:
+to Crashlytics' handler if it installed one, which forwards it to Android without recording it, or straight to
+Android's own handler.
+
 ## Known issues
 
 - **Edge-to-edge.** From target 35 Android draws apps edge to edge, and at target 36 the opt-out attribute is ignored.
