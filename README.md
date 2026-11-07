@@ -82,6 +82,16 @@ On Android 10 and later the files go to the public Download folder through Media
 the Files app and go to Downloads, then SyncCrashes. On Android 9 and earlier they go to
 `Android/data/<package>/files/SyncCrashes`.
 
+## What "Skip onboarding" does
+
+On first launch Sync checks `show___onboarding` (default true) in its `HomeActivity` preferences and opens the welcome
+and setup screens. The patch makes that check report onboarding as already done, so a fresh install opens the main
+feed. The stored flag is not changed, and the "show onboarding" entry in Sync's settings still works. Log in from the
+account menu as usual.
+
+Onboarding is also where Sync asks for the notification permission on Android 13 and later. With it skipped, allow
+notifications for Sync in Android's app settings if you want them.
+
 ## Known issues
 
 - **Edge-to-edge.** From target 35 Android draws apps edge to edge, and at target 36 the opt-out attribute is ignored.
