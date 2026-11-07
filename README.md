@@ -57,6 +57,12 @@ Compatible with Sync for Reddit `v23.06.30-13:39`. Sync for Reddit Pro is listed
 - Sets `android:enableOnBackInvokedCallback="false"` on `<application>`. Predictive back is on by default at target 36,
   and while it is on Android does not call `onBackPressed()` or deliver `KEYCODE_BACK`, which Sync relies on for back
   and swipe-back.
+- Stops the sort and "more actions" sheets from crashing. Sync shows them anchored under the toolbar and removes
+  their `BottomSheetBehavior` to place them itself. With edge-to-edge enforced, the navigation bar is transparent,
+  so Material 1.9's bottom sheet insets listener now receives insets and calls `BottomSheetBehavior.from()` on those
+  sheets, which throws `IllegalArgumentException: The view is not associated with BottomSheetBehavior`. The listener
+  now returns the insets unchanged for sheets without a behavior. Sheets that keep their behavior still get
+  Material's edge-to-edge handling.
 
 ## What "Log crashes" does
 
@@ -76,9 +82,9 @@ the Files app and go to Downloads, then SyncCrashes. On Android 9 and earlier th
 
 - **Edge-to-edge.** From target 35 Android draws apps edge to edge, and at target 36 the opt-out attribute is ignored.
   Sync's layouts were not built for that, so some screens may draw under the status bar, navigation bar or display
-  cutout. This bundle does not change layouts.
-- **Not tested on a device.** The patched APK was built, signed and inspected locally. Nothing here has been run on
-  Android 14, 15 or 16.
+  cutout. This bundle does not change layouts. It only fixes the bottom sheet crash described above.
+- **Barely tested on a device.** A Pixel 8 on Android SDK 37 confirmed the receiver fix and found the bottom sheet
+  crash. The rest has not been exercised on a device.
 - **Sync for Reddit Pro** was not available while writing these patches. The receiver rewrite matches API calls and
   package names rather than obfuscated class names, so it should apply, but it is untested.
 - Morphe Desktop's developer option "verify with SDK" fails on this app with ten cross-DEX errors for OkHttp's

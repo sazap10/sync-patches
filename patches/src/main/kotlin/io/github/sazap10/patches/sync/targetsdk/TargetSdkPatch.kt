@@ -33,12 +33,13 @@ private fun Document.elements(tag: String) = getElementsByTagName(tag).let { nod
 val targetSdkPatch = patch(
     name = "Target SDK 36",
     description = "Raises targetSdkVersion to $TARGET_SDK. Adds export flags to runtime broadcast receivers, " +
-        "declares foreground service types and their permissions, and opts out of predictive back.",
+        "declares foreground service types and their permissions, opts out of predictive back, and fixes the " +
+        "toolbar-anchored bottom sheets under enforced edge-to-edge.",
     default = true,
 ) {
     compatibleWith(*SyncCompatibility.SyncForReddit)
 
-    dependsOn(receiverExportFlagsPatch)
+    dependsOn(receiverExportFlagsPatch, bottomSheetEdgeToEdgePatch)
 
     execute {
         document("AndroidManifest.xml").use { document ->
