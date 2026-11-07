@@ -11,6 +11,7 @@ import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.TypeReference
 
 private const val BOTTOM_SHEET_BEHAVIOR = "Lcom/google/android/material/bottomsheet/BottomSheetBehavior;"
+private const val ANCHORED_SHEETS = "Lio/github/sazap10/extension/sync/AnchoredSheets;"
 private const val EDGE_TO_EDGE_CALLBACK = "Lcom/google/android/material/bottomsheet/BottomSheetDialog\$EdgeToEdgeCallback;"
 
 /** BottomSheetBehavior.from(View). Used to resolve the obfuscated CoordinatorLayout.LayoutParams names. */
@@ -35,7 +36,8 @@ internal object BottomSheetDialogInsetsListenerFingerprint : Fingerprint(
 
 /**
  * Sync shows the sort and "more actions" sheets anchored under the toolbar. For those it removes the
- * BottomSheetBehavior from the sheet's layout params (s9/f.onViewCreated) and positions the sheet itself.
+ * BottomSheetBehavior from the sheet's layout params (s9/f.onViewCreated), which leaves the sheet at the top of its
+ * CoordinatorLayout.
  *
  * Material 1.9's insets listener builds an EdgeToEdgeCallback, which calls BottomSheetBehavior.from() and throws
  * "The view is not associated with BottomSheetBehavior". At target 33 the listener never received insets: Sync
@@ -45,10 +47,16 @@ internal object BottomSheetDialogInsetsListenerFingerprint : Fingerprint(
  * The listener now returns the insets unchanged when the sheet has no BottomSheetBehavior, which is what Material
  * would need to do anyway: without a behavior there is no sheet state to follow. Sheets that keep their behavior are
  * unchanged and still get Material's edge-to-edge handling.
+ *
+ * The same edge-to-edge change moves the dialog content to the top of the screen, so a sheet left at the top of its
+ * CoordinatorLayout now covers the toolbar. For sheets without a behavior, the listener also asks [ANCHORED_SHEETS]
+ * to set the sheet's top margin to the toolbar's bottom edge, measured in the dialog's coordinate space.
  */
 internal val bottomSheetEdgeToEdgePatch = patch(
-    description = "Skips Material's bottom sheet edge-to-edge callback for sheets without a BottomSheetBehavior.",
+    description = "Fixes Sync's toolbar-anchored sheets under enforced edge-to-edge.",
 ) {
+    extendWith("extensions/sync.mpe")
+
     execute {
         val from = BottomSheetBehaviorFromFingerprint.method.implementation!!.instructions.toList()
         val layoutParamsType = from.firstNotNullOfOrNull {
@@ -75,6 +83,7 @@ internal val bottomSheetEdgeToEdgePatch = patch(
                     instance-of v0, v0, $BOTTOM_SHEET_BEHAVIOR
                     if-nez v0, :apply
                     :no_behavior
+                    invoke-static { p1 }, $ANCHORED_SHEETS->position(Landroid/view/View;)V
                     return-object p2
                 """,
                 ExternalLabel("apply", implementation!!.instructions.first()),

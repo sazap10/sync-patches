@@ -57,12 +57,16 @@ Compatible with Sync for Reddit `v23.06.30-13:39`. Sync for Reddit Pro is listed
 - Sets `android:enableOnBackInvokedCallback="false"` on `<application>`. Predictive back is on by default at target 36,
   and while it is on Android does not call `onBackPressed()` or deliver `KEYCODE_BACK`, which Sync relies on for back
   and swipe-back.
-- Stops the sort and "more actions" sheets from crashing. Sync shows them anchored under the toolbar and removes
-  their `BottomSheetBehavior` to place them itself. With edge-to-edge enforced, the navigation bar is transparent,
-  so Material 1.9's bottom sheet insets listener now receives insets and calls `BottomSheetBehavior.from()` on those
-  sheets, which throws `IllegalArgumentException: The view is not associated with BottomSheetBehavior`. The listener
-  now returns the insets unchanged for sheets without a behavior. Sheets that keep their behavior still get
-  Material's edge-to-edge handling.
+- Fixes the sort and "more actions" sheets that Sync anchors under the toolbar. Sync removes their
+  `BottomSheetBehavior` and leaves them at the top of the dialog. Enforced edge-to-edge breaks them in two ways:
+  - The navigation bar is transparent, so Material 1.9's bottom sheet insets listener now receives insets and calls
+    `BottomSheetBehavior.from()` on those sheets, which throws `IllegalArgumentException: The view is not associated
+    with BottomSheetBehavior`. The listener now returns the insets unchanged for sheets without a behavior.
+  - The dialog content now starts at the top of the screen, so the sheet covered the toolbar. For sheets without a
+    behavior, the patch sets the sheet's top margin to the toolbar's bottom edge, measured on screen and converted
+    into the dialog's coordinates. This follows the status bar height, display cutouts and orientation.
+
+  Sheets that keep their behavior are not changed and still get Material's edge-to-edge handling.
 
 ## What "Log crashes" does
 
