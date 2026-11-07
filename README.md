@@ -58,6 +58,20 @@ Compatible with Sync for Reddit `v23.06.30-13:39`. Sync for Reddit Pro is listed
   and while it is on Android does not call `onBackPressed()` or deliver `KEYCODE_BACK`, which Sync relies on for back
   and swipe-back.
 
+## What "Log crashes" does
+
+This patch is off by default. Enable it in Morphe Manager when you need to report a crash and have no adb.
+
+It installs an uncaught-exception handler at the start of `RedditApplication.onCreate`. When Sync crashes, the
+handler writes a text file and then passes the crash on to the previous handler, so Android still closes the app as
+usual. Each crash gets its own file named `sync-crash-<yyyyMMdd-HHmmss>.txt`, containing the time, the thread, Sync's
+version, the device model, the Android and target SDK levels, and the full stack trace with every cause. It does not
+record accounts, tokens, intents or extras.
+
+On Android 10 and later the files go to the public Download folder through MediaStore, which needs no permission. Open
+the Files app and go to Downloads, then SyncCrashes. On Android 9 and earlier they go to
+`Android/data/<package>/files/SyncCrashes`.
+
 ## Known issues
 
 - **Edge-to-edge.** From target 35 Android draws apps edge to edge, and at target 36 the opt-out attribute is ignored.
