@@ -33,8 +33,43 @@ is the same.
 ## Patches
 
 <!-- PATCHES_START EXPANDED -->
+> **[v1.0.0](https://github.com/sazap10/sync-patches/releases/tag/v1.0.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;10 patches total
+<details open>
+<summary>📦 Sync for Reddit&nbsp;&nbsp;•&nbsp;&nbsp;5 patches</summary>
+<br>
 
-The release workflow replaces this section with the generated patch list.
+**Package name:** `com.laurencedawson.reddit_sync`
+
+**🎯 Supported versions:**
+
+| v23.06.30-13:39 |
+| :---: |
+
+| 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
+|----------|----------------|-----------|
+| [Default posts sort: Best](#default-posts-sort-best) | Uses Best as the front page's posts sort until you choose a default posts sort in settings. Subreddits keep Hot, and sorts you saved for a feed are kept. |  |
+| [Disable Crashlytics](#disable-crashlytics) | Stops Firebase Crashlytics from collecting and sending crash reports. |  |
+| [Log crashes](#log-crashes) | Writes every crash to a text file in Download/SyncCrashes, so crashes can be reported without adb. |  |
+| [Skip onboarding](#skip-onboarding) | Opens the main feed on first launch instead of Sync's welcome and setup screens. |  |
+| [Target SDK 36](#target-sdk-36) | Raises targetSdkVersion to 36. Adds export flags to runtime broadcast receivers, declares foreground service types and their permissions, opts out of predictive back, and fixes the toolbar-anchored bottom sheets under enforced edge-to-edge. |  |
+
+</details>
+
+<details open>
+<summary>📦 Sync for Reddit Pro&nbsp;&nbsp;•&nbsp;&nbsp;5 patches</summary>
+<br>
+
+**Package name:** `com.laurencedawson.reddit_sync.pro`
+
+| 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
+|----------|----------------|-----------|
+| [Default posts sort: Best](#default-posts-sort-best) | Uses Best as the front page's posts sort until you choose a default posts sort in settings. Subreddits keep Hot, and sorts you saved for a feed are kept. |  |
+| [Disable Crashlytics](#disable-crashlytics) | Stops Firebase Crashlytics from collecting and sending crash reports. |  |
+| [Log crashes](#log-crashes) | Writes every crash to a text file in Download/SyncCrashes, so crashes can be reported without adb. |  |
+| [Skip onboarding](#skip-onboarding) | Opens the main feed on first launch instead of Sync's welcome and setup screens. |  |
+| [Target SDK 36](#target-sdk-36) | Raises targetSdkVersion to 36. Adds export flags to runtime broadcast receivers, declares foreground service types and their permissions, opts out of predictive back, and fixes the toolbar-anchored bottom sheets under enforced edge-to-edge. |  |
+
+</details>
 
 <!-- PATCHES_END -->
 
